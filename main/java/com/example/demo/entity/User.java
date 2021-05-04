@@ -1,11 +1,9 @@
 package com.example.demo.entity;
 
-import com.example.demo.entity.Role;
-
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
-import javax.persistence.Entity;
 
 @Entity
 @Table(name = "users")
@@ -15,6 +13,7 @@ public class User {
     private String fullName;
     private String password;
     private Set<Role> roles;
+    private Set<Article> articles;
 
     public User(){  }
 
@@ -23,6 +22,16 @@ public class User {
         this.fullName=fullName;
         this.password=password;
         this.roles = new HashSet<>();
+        this.articles = new HashSet<>();
+    }
+
+    @OneToMany(mappedBy = "author")
+    public Set<Article> getArticles() {
+        return articles;
+    }
+
+    public void setArticles(Set<Article> articles) {
+        this.articles = articles;
     }
 
     @ManyToMany(fetch = FetchType.EAGER)
@@ -70,5 +79,20 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+    public void addRole(Role role){
+        this.roles.add(role);
+    }
+
+    @Transient
+    public boolean isAdmin(){
+        return this.getRoles()
+                .stream()
+                .anyMatch(role->role.getName().equals("ROLE_ADMIN"));
+    }
+
+    @Transient
+    public boolean isAuthor(Article article){
+        return Objects.equals(this.getId(), article.getAuthor().getId());
     }
 }

@@ -1,5 +1,7 @@
 package com.example.demo.entity;
 
+import org.thymeleaf.util.StringUtils;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,5 +43,10 @@ public class Role {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Transient
+    public String getSimpleName(){
+        return StringUtils.capitalize(this.getName().substring(5).toLowerCase());
     }
 }
